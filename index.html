@@ -25,7 +25,7 @@
   --f-body:"Nunito Sans",ui-sans-serif,system-ui,sans-serif;
   --f-num:"IBM Plex Mono",ui-monospace,Menlo,monospace;
 }
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+@media (prefers-color-scheme:dark){:root:not([data-theme]){
   --bg:#12160F; --surface:#1B2117; --ink:#EEF1E6; --muted:#9BA58E; --line:#2E3727;
   --leaf:#5FBF85; --leaf-ink:#0E1A12; --gold:#F5C431; --gold-soft:#3A3315;
   --ok:#6FCF94; --warn:#F0A64A; --bad:#F2867D; --bad-soft:#3A1C1A; color-scheme:dark}}
@@ -33,12 +33,31 @@
   --bg:#12160F; --surface:#1B2117; --ink:#EEF1E6; --muted:#9BA58E; --line:#2E3727;
   --leaf:#5FBF85; --leaf-ink:#0E1A12; --gold:#F5C431; --gold-soft:#3A3315;
   --ok:#6FCF94; --warn:#F0A64A; --bad:#F2867D; --bad-soft:#3A1C1A; color-scheme:dark}
+/* Modo sol: máximo contraste y letra más grande para vender a pleno sol */
+:root[data-theme="sol"]{
+  --bg:#FFFFFF; --surface:#FFFFFF; --ink:#000000; --muted:#2E3328; --line:#7D856F;
+  --leaf:#0B4A26; --leaf-ink:#FFFFFF; --gold:#FFC400; --gold-soft:#FFF0B3;
+  --ok:#0B6B34; --warn:#7A4200; --bad:#A3150D; --bad-soft:#FFE1DE; color-scheme:light; font-size:18px}
+:root[data-theme="sol"] body{font-size:17px;font-weight:600}
+:root[data-theme="sol"] .prod,:root[data-theme="sol"] .list,:root[data-theme="sol"] .money,:root[data-theme="sol"] .kpi,:root[data-theme="sol"] .ctable,:root[data-theme="sol"] .chip,:root[data-theme="sol"] .mini,:root[data-theme="sol"] .bars{border-width:2px;border-color:var(--line)}
+:root[data-theme="sol"] .muted,:root[data-theme="sol"] .sub,:root[data-theme="sol"] .prod .s{color:var(--muted);font-weight:700}
+.gear{width:44px;height:44px;border-radius:12px;border:0;background:rgba(255,255,255,.14);color:var(--leaf-ink);display:grid;place-items:center;cursor:pointer}
+.themes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.themes label{display:flex;flex-direction:column;gap:2px;border:2px solid var(--line);border-radius:12px;padding:10px 12px;cursor:pointer;font-weight:800}
+.themes label small{font-weight:600;color:var(--muted);font-size:.78rem}
+.themes input{position:absolute;opacity:0;pointer-events:none}
+.themes label:has(input:checked){border-color:var(--leaf);background:var(--gold-soft)}
+.themes label:focus-within{outline:3px solid var(--gold);outline-offset:2px}
+.fiadobtns{flex-wrap:wrap;justify-content:flex-end}
 html,body{height:100%}
 body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.45;display:flex;flex-direction:column}
 .wrap{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));max-width:720px;margin:0 auto;width:100%;box-sizing:border-box}
 header{background:var(--leaf);color:var(--leaf-ink);z-index:5}
 header .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-block:12px}
 .brand{font-family:var(--f-display);font-weight:800;font-size:1.25rem;letter-spacing:-.01em;margin:0}
+.brand{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.brand small{overflow:hidden;text-overflow:ellipsis}
+.hbtns{flex:none}
 .brand small{display:block;font-family:var(--f-body);font-weight:600;font-size:.72rem;opacity:.8;letter-spacing:.06em;text-transform:uppercase}
 .tasa{background:var(--gold);color:#241C00;border:0;border-radius:999px;padding:8px 14px;font:600 .85rem var(--f-num);cursor:pointer;white-space:nowrap}
 .tasa.off{background:var(--bad);color:#fff}
@@ -168,8 +187,8 @@ header .wrap{padding-top:calc(12px + env(safe-area-inset-top,0px))}
 </head>
 <body>
 <header><div class="wrap">
-  <h1 class="brand">Caja Crujiente<small>Papitas · maní · tostones</small></h1>
-  <div class="hbtns"><button class="install" id="btnInstall" type="button" hidden>Instalar</button><button class="tasa" id="btnTasa" type="button">Tasa: —</button></div>
+  <h1 class="brand" id="brand">Caja Crujiente<small>Papitas · maní · tostones</small></h1>
+  <div class="hbtns"><button class="install" id="btnInstall" type="button" hidden>Instalar</button><button class="tasa" id="btnTasa" type="button">Tasa: —</button><button class="gear" type="button" data-act="ajustes" aria-label="Ajustes"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button></div>
 </div></header>
 <main id="main"><div class="loading">Abriendo tu caja…</div></main>
 <div id="dock" hidden></div>
@@ -205,7 +224,7 @@ const DEFAULT_CFG={tasa:0,tasaFecha:'',productos:[
  {id:'platanitos',nombre:'Platanitos',precio:1,costo:0.45,stock:0,min:8,color:COLORS[3]},
  {id:'chicharron',nombre:'Chicharrón',precio:2,costo:1,stock:0,min:5,color:COLORS[4]},
  {id:'yuquitas',nombre:'Yuquitas',precio:1,costo:0.45,stock:0,min:8,color:COLORS[5]}
-],clientes:[],nuevo:true};
+],clientes:[],nuevo:true,negocio:'Caja Crujiente',pie:'',tema:'auto'};
 
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -293,8 +312,16 @@ function cartTotal(){return r2(cartLines().reduce((s,l)=>s+l.p.precio*l.q,0))}
 let toastT;function toast(msg){clearTimeout(toastT);let t=$('.toast');if(!t){t=document.createElement('div');t.className='toast';t.setAttribute('role','status');document.body.appendChild(t)}t.textContent=msg;toastT=setTimeout(()=>t.remove(),2600)}
 
 /* ---------- Render ---------- */
+function aplicarTema(){
+  const t=S.cfg.tema||'auto',r=document.documentElement;
+  if(t==='auto')delete r.dataset.theme;else r.dataset.theme={claro:'light',oscuro:'dark',sol:'sol'}[t]||'light';
+  const mc=document.querySelector('meta[name="theme-color"]');if(mc)mc.content=t==='sol'?'#0B4A26':'#1E5B37';
+}
+const negocio=()=>(S.cfg.negocio||'').trim()||'Caja Crujiente';
 function render(){
   if(!S.cfg)return;
+  aplicarTema();
+  $('#brand').innerHTML=esc(negocio())+'<small>Papitas · maní · tostones</small>';
   const tb=$('#btnTasa');tb.textContent=S.cfg.tasa?('Bs '+nf.format(S.cfg.tasa)+' / $'):'Fijar tasa';tb.classList.toggle('off',!S.cfg.tasa);
   $('#tabs').innerHTML=TABS.map(([k,l])=>`<button type="button" data-tab="${k}" aria-current="${S.view===k||(k==='inicio'&&S.view==='cierre')}">${ICONS[k]}<span>${l}</span><i class="dot"></i></button>`).join('');
   const v={inicio:vInicio,cierre:vCierre,vender:vVender,inventario:vInventario,fiado:vFiado,reportes:vReportes}[S.view]();
@@ -333,7 +360,7 @@ function renderDock(){
     <div class="paychips" role="group" aria-label="Forma de pago">${METODOS.map(([k,l])=>`<button type="button" class="chip" data-met="${k}" aria-pressed="${S.metodo===k}">${l}</button>`).join('')}</div>
     ${S.metodo==='fiado'?`<div class="dockcli"><label for="selCli" class="label">Cliente</label><select id="selCli"><option value="">Elige un cliente…</option>${S.cfg.clientes.map(c=>`<option value="${c.id}" ${S.cliente===c.id?'selected':''}>${esc(c.nombre)} (debe ${usd(deuda(c.id))})</option>`).join('')}</select><button type="button" class="mini" data-act="nuevoCli">+ Nuevo</button></div>`:''}
     <div class="paybar">
-      <div class="sum"><span class="muted" style="font-size:.78rem">${und?und+(und===1?' producto':' productos'):'Toca un producto'}</span><span class="u">${usd(tot)}</span><span class="num muted" style="font-size:.78rem">${S.cfg.tasa?bs(toBs(tot)):'Bs —'}</span></div>
+      <div class="sum"><span class="muted" style="font-size:.78rem">${und?und+(und===1?' producto':' productos'):(S.ultima&&S.movs.some(x=>x.id===S.ultima)?`<button type="button" class="mini" data-recibo="${S.ultima}" style="margin-bottom:2px">Recibo de la última venta</button>`:'Toca un producto')}</span><span class="u">${usd(tot)}</span><span class="num muted" style="font-size:.78rem">${S.cfg.tasa?bs(toBs(tot)):'Bs —'}</span></div>
       <button type="button" class="icon" data-act="vaciar" aria-label="Vaciar venta" ${und?'':'disabled'}><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg></button>
       <button type="button" class="btn go" data-act="cobrar" ${und&&fiadoOk?'':'disabled'}>${S.metodo==='fiado'?'Anotar':'Cobrar'}</button>
     </div></div>`;
@@ -449,7 +476,7 @@ function vFiado(){
     const ult=S.movs.find(m=>m.cliente===c.id);
     return `<div class="item"><div class="grow"><div class="t">${esc(c.nombre)}</div><div class="sub">${c.tel?esc(c.tel)+' · ':''}${ult?'Último movimiento '+new Date(ult.t).toLocaleDateString('es-VE'):'Sin movimientos'}</div></div>
     <div style="text-align:right"><div class="num" style="font-weight:600;color:${d>0?'var(--bad)':'var(--ok)'}">${usd(d)}</div><div class="sub num">${S.cfg.tasa&&d>0?bs(toBs(d)):''}</div></div>
-    </div><div class="item" style="padding-top:0"><div class="grow"></div><button type="button" class="mini" data-editcli="${c.id}">Editar</button><button type="button" class="mini" data-deuda="${c.id}">+ Deuda</button><button type="button" class="mini" data-abono="${c.id}" ${d>0?'':'disabled'}>Abonar</button></div>`}).join('');
+    </div><div class="item fiadobtns" style="padding-top:0"><button type="button" class="mini" data-estado="${c.id}">Estado</button><button type="button" class="mini" data-editcli="${c.id}">Editar</button><button type="button" class="mini" data-deuda="${c.id}">+ Deuda</button><button type="button" class="mini" data-abono="${c.id}" ${d>0?'':'disabled'}>Abonar</button></div>`}).join('');
   return `${avisos()}<div class="row"><h2>Fiado</h2><button type="button" class="btn" data-act="nuevoCli">+ Cliente</button></div>
     <div class="kpi hero"><div class="label">Te deben en total</div><div class="v">${usd(total)}</div><div class="bs">${S.cfg.tasa?bs(toBs(total)):''}</div></div>
     <div class="list">${items||'<div class="empty">Aún no tienes clientes con cuenta. Agrégalos aquí o al vender con “Fiado”.</div>'}</div>`;
@@ -479,7 +506,7 @@ function vReportes(){
     else if(m.tipo==='abono'){t='Abono de '+(cliente(m.cliente)?.nombre||'cliente');sub=(METODOS.find(x=>x[0]===m.metodo)||['',''])[1];monto=usd(m.monto)}
     else if(m.tipo==='cierre'){t='Cierre de caja';sub=m.nota||((Math.abs(m.dif?.usd||0)<0.005&&Math.abs(m.dif?.bs||0)<0.005)?'Todo cuadró':'Con diferencias');monto=usd(m.total)}
     else{t='Producción: '+m.cant+' '+m.nombre;sub='Costo '+usd(m.costoTotal);monto='+'+m.cant}
-    return `<div class="item"><div class="grow"><div class="t" style="font-weight:700">${esc(t)}</div><div class="sub">${esc(hora)} · ${esc(sub)}</div></div><div class="num">${monto}</div><button type="button" class="mini" data-anular="${m.id}" aria-label="Anular">✕</button></div>`}).join('');
+    return `<div class="item"><div class="grow"><div class="t" style="font-weight:700">${esc(t)}</div><div class="sub">${esc(hora)} · ${esc(sub)}</div></div><div class="num">${monto}</div>${m.tipo==='venta'?`<button type="button" class="mini" data-recibo="${m.id}">Recibo</button>`:''}<button type="button" class="mini" data-anular="${m.id}" aria-label="Anular">✕</button></div>`}).join('');
   return `<div class="row"><h2>Reportes</h2></div>
     <div class="chips">${per.map(([k,l])=>`<button type="button" class="chip" data-per="${k}" aria-pressed="${S.periodo===k}">${l}</button>`).join('')}</div>
     <div class="kpis">
@@ -588,7 +615,86 @@ async function cobrar(){
   if(S.metodo==='fiado')m.cliente=S.cliente;
   S.cart={};await save();
   try{await S.store.addMov(m)}catch(e){toast('No se registró la venta. Revisa tu conexión.');return}
+  S.ultima=m.id;
   render();toast(S.metodo==='fiado'?'Fiado anotado: '+usd(total):'Venta cobrada: '+usd(total)+(S.cfg.tasa?' · '+bs(toBs(total)):''));
+}
+
+/* ---------- Ajustes ---------- */
+function sAjustes(){
+  const t=S.cfg.tema||'auto';
+  const op=[['auto','Automático','Como el teléfono'],['claro','Claro','Fondo claro'],['oscuro','Oscuro','Para la noche'],['sol','Modo sol','Más contraste y letra grande']];
+  sheet(`<h2>Ajustes</h2>
+    <div class="field"><label for="fNeg">Nombre del negocio</label><input id="fNeg" name="negocio" value="${esc(S.cfg.negocio||'Caja Crujiente')}" placeholder="Ej. Snacks El Pipo"></div>
+    <div class="field"><label for="fPie">Mensaje al pie del recibo (opcional)</label><input id="fPie" name="pie" value="${esc(S.cfg.pie||'')}" placeholder="Ej. Pago móvil: 0414-0000000"></div>
+    <fieldset style="border:0;padding:0;margin:0;display:flex;flex-direction:column;gap:6px"><legend class="label" style="margin-bottom:6px">Apariencia</legend>
+      <div class="themes">${op.map(([k,l,d])=>`<label><input type="radio" name="tema" value="${k}" ${t===k?'checked':''}>${l}<small>${d}</small></label>`).join('')}</div></fieldset>
+    ${acts('Guardar')}`,
+  async fd=>{S.cfg.negocio=String(fd.get('negocio')||'').trim()||'Caja Crujiente';S.cfg.pie=String(fd.get('pie')||'').trim();S.cfg.tema=String(fd.get('tema')||'auto');await save();render();toast('Ajustes guardados')});
+}
+/* ---------- Recibos e imágenes para compartir ---------- */
+function fitText(x,str,maxW){str=String(str);if(x.measureText(str).width<=maxW)return str;while(str.length>1&&x.measureText(str+'…').width>maxW)str=str.slice(0,-1);return str+'…'}
+async function ticketPNG(t){
+  try{await document.fonts.ready}catch(e){}
+  const W=600,P=36,LH=36,SANS='"Nunito Sans", system-ui, sans-serif',MONO='"IBM Plex Mono", ui-monospace, monospace',DISP='"Bricolage Grotesque", "Nunito Sans", sans-serif';
+  const extra=t.extra||[];
+  const H=176+t.lineas.length*LH+34+t.totales.length*44+(extra.length?16+extra.length*28:0)+96;
+  const c=document.createElement('canvas'),sc=2;c.width=W*sc;c.height=H*sc;const x=c.getContext('2d');x.scale(sc,sc);
+  x.fillStyle='#FFFFFF';x.fillRect(0,0,W,H);
+  x.fillStyle='#1E5B37';x.fillRect(0,0,W,124);x.fillStyle='#F2B705';x.fillRect(0,124,W,6);
+  x.fillStyle='#FFFFFF';x.font='800 32px '+DISP;x.fillText(fitText(x,negocio(),W-2*P),P,60);
+  x.font='600 18px '+SANS;x.globalAlpha=.9;x.fillText(fitText(x,t.titulo+' · '+t.fecha,W-2*P),P,96);x.globalAlpha=1;
+  let y=176;
+  for(const l of t.lineas){
+    x.font='600 20px '+MONO;const dw=x.measureText(l.der).width;
+    x.fillStyle=l.colorDer||'#1D2418';x.textAlign='right';x.fillText(l.der,W-P,y);x.textAlign='left';
+    x.fillStyle='#1D2418';x.font=(l.bold?'800 ':'600 ')+'20px '+SANS;x.fillText(fitText(x,l.izq,W-2*P-dw-18),P,y);
+    y+=LH;
+  }
+  x.strokeStyle='#C9CFBC';x.setLineDash([8,7]);x.lineWidth=2;x.beginPath();x.moveTo(P,y-14);x.lineTo(W-P,y-14);x.stroke();x.setLineDash([]);
+  y+=20;
+  t.totales.forEach((tt,i)=>{
+    x.fillStyle=tt.color||'#1D2418';x.font=(i===0?'600 30px ':'500 20px ')+MONO;x.textAlign='right';x.fillText(tt.der,W-P,y);x.textAlign='left';
+    x.font=(i===0?'800 24px ':'600 19px ')+SANS;x.fillText(tt.izq,P,y);y+=44;
+  });
+  if(extra.length){y+=4;x.fillStyle='#5A6450';x.font='600 17px '+SANS;for(const e of extra){x.fillText(fitText(x,e,W-2*P),P,y);y+=28}}
+  x.fillStyle='#1E5B37';x.font='800 19px '+SANS;x.textAlign='center';x.fillText(fitText(x,(S.cfg.pie||'').trim()||'¡Gracias por su compra!',W-2*P),W/2,H-44);x.textAlign='left';
+  return new Promise(r=>c.toBlob(r,'image/png'));
+}
+function sImagen(blob,name,titulo){
+  const url=URL.createObjectURL(blob),file=new File([blob],name,{type:'image/png'});
+  let can=false;try{can=!!(navigator.canShare&&navigator.canShare({files:[file]}))}catch(e){}
+  sheet(`<h2>${esc(titulo)}</h2><img src="${url}" alt="${esc(titulo)}" style="width:100%;border-radius:12px;border:1px solid var(--line)">
+    <div class="actions"><button type="button" class="btn ghost" data-cancel>Cerrar</button>${can?'<button type="submit" class="btn">Enviar por WhatsApp…</button>':`<a class="btn" href="${url}" download="${esc(name)}" style="text-align:center;text-decoration:none">Descargar imagen</a>`}</div>
+    ${can?'':'<p class="muted" style="margin:0;font-size:.8rem">Descárgala y envíala desde la galería.</p>'}`,
+  async()=>{try{await navigator.share({files:[file],title:titulo})}catch(e){return false}});
+}
+const fechaHora=t=>new Date(t).toLocaleDateString('es-VE',{day:'2-digit',month:'2-digit',year:'numeric'})+' '+new Date(t).toLocaleTimeString('es-VE',{hour:'2-digit',minute:'2-digit'});
+async function recibo(mid){
+  const m=S.movs.find(x=>x.id===mid);if(!m||m.tipo!=='venta')return;
+  const tasa=m.tasa||S.cfg.tasa||0;
+  const lineas=m.items.map(it=>({izq:`${it.cant} × ${it.nombre}`,der:usd(it.precio*it.cant)}));
+  const totales=[{izq:'Total',der:usd(m.total)}];if(tasa)totales.push({izq:'En bolívares',der:bs(m.total*tasa)});
+  const extra=['Forma de pago: '+((METODOS.find(x=>x[0]===m.metodo)||['',''])[1])];
+  if(m.cliente){const c=cliente(m.cliente);if(c)extra.push('Cliente: '+c.nombre);extra.push('Debe en total: '+usd(deuda(m.cliente)))}
+  if(tasa)extra.push('Tasa: Bs '+nf.format(tasa)+' por $');
+  const blob=await ticketPNG({titulo:m.metodo==='fiado'?'Nota de fiado':'Recibo',fecha:fechaHora(m.t),lineas,totales,extra});
+  sImagen(blob,'recibo-'+new Date(m.t).toISOString().slice(0,10)+'.png',m.metodo==='fiado'?'Nota de fiado':'Recibo de venta');
+}
+async function estadoCuenta(cid){
+  const c=cliente(cid);if(!c)return;
+  const ms=S.movs.filter(m=>m.cliente===cid&&(m.tipo==='abono'||m.tipo==='deuda'||(m.tipo==='venta'&&m.metodo==='fiado'))).slice().sort((a,b)=>a.t-b.t);
+  const ult=ms.slice(-18);
+  const f=t=>new Date(t).toLocaleDateString('es-VE',{day:'2-digit',month:'2-digit'});
+  const lineas=ult.map(m=>m.tipo==='abono'?{izq:f(m.t)+' · Abono',der:'−'+usd(m.monto),colorDer:'#1E7A45'}
+    :m.tipo==='deuda'?{izq:f(m.t)+' · '+(m.nota||'Deuda anotada'),der:'+'+usd(m.monto)}
+    :{izq:f(m.t)+' · '+m.items.map(i=>i.cant+' '+i.nombre).join(', '),der:'+'+usd(m.total)});
+  if(!lineas.length)lineas.push({izq:'Sin movimientos',der:usd(0)});
+  const d=deuda(cid);
+  const totales=[{izq:'Debe en total',der:usd(d),color:d>0?'#A3150D':'#1E7A45'}];if(S.cfg.tasa&&d>0)totales.push({izq:'En bolívares (tasa de hoy)',der:bs(toBs(d))});
+  const extra=['Cliente: '+c.nombre];if(ms.length>ult.length)extra.push(`Se muestran los últimos ${ult.length} de ${ms.length} movimientos`);
+  if(S.cfg.tasa)extra.push('Tasa: Bs '+nf.format(S.cfg.tasa)+' por $');
+  const blob=await ticketPNG({titulo:'Estado de cuenta',fecha:fechaHora(Date.now()),lineas,totales,extra});
+  sImagen(blob,'estado-de-cuenta-'+c.nombre.replace(/[^\wáéíóúñ]+/gi,'-').toLowerCase()+'.png','Estado de cuenta de '+c.nombre);
 }
 
 /* ---------- Eventos ---------- */
@@ -615,6 +721,9 @@ document.addEventListener('click',e=>{
   if(d.act==='cobrar')cobrar();
   if(d.act==='nuevoCli')sCliente();
   if(d.act==='nuevoProd')sProducto();
+  if(d.act==='ajustes')sAjustes();
+  if(d.recibo){recibo(d.recibo);return}
+  if(d.estado){estadoCuenta(d.estado);return}
   if(d.act==='cierre'){S.view='cierre';render();$('#main').scrollTop=0}
   if(d.act==='compartir')compartir();
   if(d.act==='cerrarCaja')cerrarCaja();
