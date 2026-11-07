@@ -242,7 +242,7 @@ async function save(){try{await S.store.saveCfg(S.cfg)}catch(e){toast('No se gua
 /* ---------- Utilidades ---------- */
 const prod=id=>S.cfg.productos.find(p=>p.id===id);
 const cliente=id=>S.cfg.clientes.find(c=>c.id===id);
-function deuda(cid){let d=0;for(const m of S.movs){if(m.cliente!==cid)continue;if(m.tipo==='venta'&&m.metodo==='fiado')d+=m.total;if(m.tipo==='abono')d-=m.monto}return r2(d)}
+function deuda(cid){let d=0;for(const m of S.movs){if(m.cliente!==cid)continue;if(m.tipo==='venta'&&m.metodo==='fiado')d+=m.total;if(m.tipo==='deuda')d+=m.monto;if(m.tipo==='abono')d-=m.monto}return r2(d)}
 function cartLines(){return Object.entries(S.cart).filter(([,q])=>q>0).map(([id,q])=>({p:prod(id),q})).filter(l=>l.p)}
 function cartTotal(){return r2(cartLines().reduce((s,l)=>s+l.p.precio*l.q,0))}
 let toastT;function toast(msg){clearTimeout(toastT);let t=$('.toast');if(!t){t=document.createElement('div');t.className='toast';t.setAttribute('role','status');document.body.appendChild(t)}t.textContent=msg;toastT=setTimeout(()=>t.remove(),2600)}
@@ -314,7 +314,7 @@ function vFiado(){
     const ult=S.movs.find(m=>m.cliente===c.id);
     return `<div class="item"><div class="grow"><div class="t">${esc(c.nombre)}</div><div class="sub">${c.tel?esc(c.tel)+' · ':''}${ult?'Último movimiento '+new Date(ult.t).toLocaleDateString('es-VE'):'Sin movimientos'}</div></div>
     <div style="text-align:right"><div class="num" style="font-weight:600;color:${d>0?'var(--bad)':'var(--ok)'}">${usd(d)}</div><div class="sub num">${S.cfg.tasa&&d>0?bs(toBs(d)):''}</div></div>
-    <button type="button" class="mini" data-abono="${c.id}" ${d>0?'':'disabled'}>Abonar</button></div>`}).join('');
+    </div><div class="item" style="padding-top:0"><div class="grow"></div><button type="button" class="mini" data-editcli="${c.id}">Editar</button><button type="button" class="mini" data-deuda="${c.id}">+ Deuda</button><button type="button" class="mini" data-abono="${c.id}" ${d>0?'':'disabled'}>Abonar</button></div>`}).join('');
   return `${avisos()}<div class="row"><h2>Fiado</h2><button type="button" class="btn" data-act="nuevoCli">+ Cliente</button></div>
     <div class="kpi hero"><div class="label">Te deben en total</div><div class="v">${usd(total)}</div><div class="bs">${S.cfg.tasa?bs(toBs(total)):''}</div></div>
     <div class="list">${items||'<div class="empty">Aún no tienes clientes con cuenta. Agrégalos aquí o al vender con “Fiado”.</div>'}</div>`;
@@ -340,6 +340,7 @@ function vReportes(){
     const f=new Date(m.t);const hora=f.toLocaleDateString('es-VE',{day:'2-digit',month:'2-digit'})+' '+f.toLocaleTimeString('es-VE',{hour:'2-digit',minute:'2-digit'});
     let t,sub,monto;
     if(m.tipo==='venta'){t=m.items.map(i=>i.cant+' '+i.nombre).join(', ');sub=(METODOS.find(x=>x[0]===m.metodo)||['',''])[1]+(m.cliente?' · '+(cliente(m.cliente)?.nombre||''):'');monto=usd(m.total)}
+    else if(m.tipo==='deuda'){t=(m.nota||'Deuda anotada')+': '+(cliente(m.cliente)?.nombre||'cliente');sub='Fiado sin productos';monto=usd(m.monto)}
     else if(m.tipo==='abono'){t='Abono de '+(cliente(m.cliente)?.nombre||'cliente');sub=(METODOS.find(x=>x[0]===m.metodo)||['',''])[1];monto=usd(m.monto)}
     else{t='Producción: '+m.cant+' '+m.nombre;sub='Costo '+usd(m.costoTotal);monto='+'+m.cant}
     return `<div class="item"><div class="grow"><div class="t" style="font-weight:700">${esc(t)}</div><div class="sub">${esc(hora)} · ${esc(sub)}</div></div><div class="num">${monto}</div><button type="button" class="mini" data-anular="${m.id}" aria-label="Anular">✕</button></div>`}).join('');
@@ -400,11 +401,29 @@ function sProduccion(id){
     const cu=r2(num(fd.get('costo')));p.stock+=cant;p.costo=cu;S.cfg.nuevo=false;await save();
     await S.store.addMov({id:uid(),tipo:'produccion',t:Date.now(),pid:p.id,nombre:p.nombre,cant,costoTotal:r2(cant*cu)});render();toast(`+${cant} ${p.nombre}`)});
 }
-function sCliente(){
-  sheet(`<h2>Nuevo cliente</h2><div class="field"><label for="fCn">Nombre</label><input id="fCn" name="nombre" placeholder="Ej. Sra. Carmen (bodega)"></div>
-    <div class="field"><label for="fCt">Teléfono (opcional)</label><input id="fCt" name="tel" inputmode="tel"></div>${acts('Agregar cliente')}`,
+function sCliente(id){
+  const c=id?cliente(id):{nombre:'',tel:''};const d=id?deuda(id):0;
+  sheet(`<h2>${id?'Editar cliente':'Nuevo cliente'}</h2>
+    <div class="field"><label for="fCn">Nombre</label><input id="fCn" name="nombre" value="${esc(c.nombre)}" placeholder="Ej. Sra. Carmen (bodega)"></div>
+    <div class="field"><label for="fCt">Teléfono (opcional)</label><input id="fCt" name="tel" inputmode="tel" value="${esc(c.tel)}"></div>
+    ${id?'':`<div class="field"><label for="fCd">Deuda inicial ($, opcional)</label><input id="fCd" name="deuda" inputmode="decimal" placeholder="Lo que ya te debía antes de usar la app"></div>`}
+    ${acts(id?'Guardar':'Agregar cliente')}
+    ${id?`<button type="button" class="btn ghost" data-delcli="${id}" style="color:var(--bad)" ${d!==0?'disabled':''}>Eliminar cliente</button>${d!==0?'<p class="muted" style="margin:0;font-size:.8rem">Para eliminarlo, su cuenta debe quedar en $0,00.</p>':''}`:''}`,
   async fd=>{const nombre=String(fd.get('nombre')||'').trim();if(!nombre){toast('Escribe el nombre del cliente.');return false}
-    const c={id:uid(),nombre,tel:String(fd.get('tel')||'').trim()};S.cfg.clientes.push(c);S.cliente=c.id;await save();render();toast('Cliente agregado')});
+    const tel=String(fd.get('tel')||'').trim();
+    if(id){Object.assign(cliente(id),{nombre,tel});await save();render();toast('Cliente guardado');return}
+    const nc={id:uid(),nombre,tel};S.cfg.clientes.push(nc);S.cliente=nc.id;await save();
+    const ini=r2(num(fd.get('deuda')));
+    if(ini>0)await S.store.addMov({id:uid(),tipo:'deuda',t:Date.now(),cliente:nc.id,monto:ini,nota:'Deuda inicial',tasa:S.cfg.tasa});
+    render();toast(ini>0?'Cliente agregado con deuda de '+usd(ini):'Cliente agregado')});
+}
+function sDeuda(cid){
+  const c=cliente(cid),d=deuda(cid);
+  sheet(`<h2>Anotar deuda a ${esc(c.nombre)}</h2><p class="muted" style="margin:0">Suma a su cuenta sin tocar el inventario. Debe ahora <span class="num">${usd(d)}</span>.</p>
+    <div class="field"><label for="fDm">Monto ($)</label><input id="fDm" name="monto" inputmode="decimal" placeholder="Ej. 12,50"></div>
+    <div class="field"><label for="fDn">Nota (opcional)</label><input id="fDn" name="nota" placeholder="Ej. Deuda del cuaderno"></div>${acts('Anotar deuda')}`,
+  async fd=>{const monto=r2(num(fd.get('monto')));if(monto<=0){toast('Escribe un monto mayor que cero.');return false}
+    await S.store.addMov({id:uid(),tipo:'deuda',t:Date.now(),cliente:cid,monto,nota:String(fd.get('nota')||'').trim()||'Deuda anotada',tasa:S.cfg.tasa});toast('Deuda anotada: '+usd(monto))});
 }
 function sAbono(cid){
   const c=cliente(cid),d=deuda(cid);
@@ -416,11 +435,11 @@ function sAbono(cid){
 }
 function sAnular(mid){
   const m=S.movs.find(x=>x.id===mid);if(!m)return;
-  sheet(`<h2>¿Anular este movimiento?</h2><p class="muted" style="margin:0">${m.tipo==='venta'?'Las unidades vuelven al inventario.':m.tipo==='produccion'?'Las unidades se restan del inventario.':'La deuda del cliente vuelve a subir.'}</p>${acts('Anular',true)}`,
+  sheet(`<h2>¿Anular este movimiento?</h2><p class="muted" style="margin:0">${m.tipo==='venta'?'Las unidades vuelven al inventario.':m.tipo==='produccion'?'Las unidades se restan del inventario.':m.tipo==='deuda'?'Esa deuda se borra de la cuenta del cliente.':'La deuda del cliente vuelve a subir.'}</p>${acts('Anular',true)}`,
   async()=>{
     if(m.tipo==='venta')for(const it of m.items){const p=prod(it.pid);if(p)p.stock+=it.cant}
     if(m.tipo==='produccion'){const p=prod(m.pid);if(p)p.stock-=m.cant}
-    if(m.tipo!=='abono')await save();
+    if(m.tipo==='venta'||m.tipo==='produccion')await save();
     await S.store.delMov(mid);toast('Movimiento anulado')});
 }
 async function cobrar(){
@@ -451,6 +470,9 @@ document.addEventListener('click',e=>{
   if(d.prod)return sProduccion(d.prod);
   if(d.edit)return sProducto(d.edit);
   if(d.abono)return sAbono(d.abono);
+  if(d.deuda)return sDeuda(d.deuda);
+  if(d.editcli)return sCliente(d.editcli);
+  if(d.delcli){if(deuda(d.delcli)!==0)return;S.cfg.clientes=S.cfg.clientes.filter(c=>c.id!==d.delcli);if(S.cliente===d.delcli)S.cliente='';save();closeSheet();render();toast('Cliente eliminado');return}
   if(d.anular)return sAnular(d.anular);
   if(d.delprod){S.cfg.productos=S.cfg.productos.filter(p=>p.id!==d.delprod);delete S.cart[d.delprod];save();closeSheet();render();toast('Producto eliminado');return}
   if(d.act==='vaciar'){S.cart={};render()}
