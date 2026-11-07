@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#1E5B37">
-<meta name="description" content="Ventas, inventario, fiado y reportes para papitas, maní y tostones.">
+<meta name="description" content="Ventas, inventario, créditos y reportes para papitas, maní y tostones.">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon-192.png" type="image/png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -49,6 +49,10 @@
 .themes label:has(input:checked){border-color:var(--leaf);background:var(--gold-soft)}
 .themes label:focus-within{outline:3px solid var(--gold);outline-offset:2px}
 .fiadobtns{flex-wrap:wrap;justify-content:flex-end}
+.qrbox{display:flex;gap:12px;align-items:center;border:1px dashed var(--line);border-radius:12px;padding:10px}
+.qrbox img{width:84px;height:84px;object-fit:contain;background:#fff;border-radius:8px}
+.chkrow{display:flex;gap:8px;align-items:center;font-weight:600;font-size:.9rem}
+.chkrow input{width:22px;height:22px;accent-color:var(--leaf)}
 html,body{height:100%}
 body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.45;display:flex;flex-direction:column}
 .wrap{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));max-width:720px;margin:0 auto;width:100%;box-sizing:border-box}
@@ -205,8 +209,8 @@ const ICONS={
  fiado:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="4"/><path d="M2 21c0-4 3-6 7-6s7 2 7 6"/><path d="M17 11h5M19.5 8.5v5"/></svg>',
  reportes:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>'
 };
-const TABS=[['inicio','Inicio'],['vender','Vender'],['inventario','Inventario'],['fiado','Fiado'],['reportes','Reportes']];
-const METODOS=[['usd','Efectivo $'],['bs','Efectivo Bs'],['pm','Pago móvil'],['punto','Punto'],['fiado','Fiado']];
+const TABS=[['inicio','Inicio'],['vender','Vender'],['inventario','Inventario'],['fiado','Crédito'],['reportes','Reportes']];
+const METODOS=[['usd','Efectivo $'],['bs','Efectivo Bs'],['pm','Pago móvil'],['punto','Punto'],['fiado','Crédito']];
 const COLORS=['#E0A100','#8B5A2B','#5E8C31','#C0392B','#7B6D3A','#2E86AB','#9B59B6','#16A085'];
 const ILLU={
  papitas:'<svg viewBox="0 0 34 34" aria-hidden="true"><path d="M8 7l3-2 3 2 3-2 3 2 3-2 3 2v20a2 2 0 0 1-2 2H10a2 2 0 0 1-2-2z" fill="#E0A100"/><ellipse cx="17" cy="18" rx="5.5" ry="4" fill="#FFF3C9"/><circle cx="15.5" cy="17" r="0.9" fill="#E0A100"/><circle cx="18.5" cy="19" r="0.9" fill="#E0A100"/></svg>',
@@ -380,17 +384,17 @@ function vInicio(){
   const filas=[['usd','Efectivo $'],['pm','Pago móvil'],['bs','Efectivo Bs'],['punto','Punto']];
   const max=Math.max(0.01,...filas.map(([k])=>R.por[k].u),R.por.fiado.u);
   const barras=filas.map(([k,l])=>`<div class="bar"><div class="row"><span>${l}</span><span class="num"><b>${usd(R.por[k].u)}</b>${(k==='pm'||k==='bs')&&R.por[k].b?` <span class="muted" style="font-size:.78rem">${bs(R.por[k].b)}</span>`:''}</span></div><div class="track"><div class="fill" style="width:${R.por[k].u/max*100}%"></div></div></div>`).join('')
-   +`<div class="bar"><div class="row"><span>Quedó fiado</span><span class="num" style="color:var(--bad)"><b>${usd(R.por.fiado.u)}</b></span></div><div class="track"><div class="fill bad" style="width:${R.por.fiado.u/max*100}%"></div></div></div>`;
+   +`<div class="bar"><div class="row"><span>Quedó a crédito</span><span class="num" style="color:var(--bad)"><b>${usd(R.por.fiado.u)}</b></span></div><div class="track"><div class="fill bad" style="width:${R.por.fiado.u/max*100}%"></div></div></div>`;
   const bajos=S.cfg.productos.filter(p=>p.stock<=p.min).sort((a,b)=>a.stock-b.stock);
   const deben=S.cfg.clientes.map(c=>deuda(c.id)).filter(d=>d>0);const totDeben=r2(deben.reduce((s,d)=>s+d,0));
   const fecha=new Date().toLocaleDateString('es-VE',{weekday:'long',day:'numeric',month:'long'});
   return `${avisos()}
     <div class="kpi hero"><div class="label">Vendido hoy · ${esc(fecha)}</div><div class="v">${usd(R.total)}</div><div class="bs">${S.cfg.tasa?bs(toBs(R.total)):''}</div>
       <div class="minis"><div>Ganancia<b>${usd(R.gan)}</b></div><div>Ventas<b>${R.n}</b></div></div></div>
-    <section class="money" aria-label="Dónde está la plata hoy"><h3>Dónde está la plata hoy</h3>${barras}${R.abonos?`<p class="muted" style="margin:0;font-size:.8rem">Incluye ${usd(R.abonos)} en abonos de fiado.</p>`:''}</section>
+    <section class="money" aria-label="Dónde está la plata hoy"><h3>Dónde está la plata hoy</h3>${barras}${R.abonos?`<p class="muted" style="margin:0;font-size:.8rem">Incluye ${usd(R.abonos)} en abonos de crédito.</p>`:''}</section>
     ${bajos.length?`<section class="list" aria-label="Se están acabando"><div class="item"><h3 class="grow">Se están acabando</h3><span class="muted" style="font-size:.8rem">${bajos.length} ${bajos.length===1?'producto':'productos'}</span></div>
       ${bajos.map(p=>`<div class="item"><span class="pill ${p.stock<=0?'bad':''}">${p.stock<=0?'Agotado':'Quedan '+p.stock}</span><span class="grow t">${esc(p.nombre)}</span><button type="button" class="mini" data-prod="${p.id}">+ Producir</button></div>`).join('')}</section>`:''}
-    ${totDeben?`<button type="button" class="banner row" data-tab="fiado" style="border:0;font:inherit;color:inherit;text-align:left;cursor:pointer;width:100%"><span>Te deben <b class="num">${usd(totDeben)}</b> entre ${deben.length} ${deben.length===1?'cliente':'clientes'}</span><b style="color:var(--leaf)">Ver fiado</b></button>`:''}
+    ${totDeben?`<button type="button" class="banner row" data-tab="fiado" style="border:0;font:inherit;color:inherit;text-align:left;cursor:pointer;width:100%"><span>Te deben <b class="num">${usd(totDeben)}</b> entre ${deben.length} ${deben.length===1?'cliente':'clientes'}</span><b style="color:var(--leaf)">Ver créditos</b></button>`:''}
     ${R.cierre?`<div class="banner" style="background:transparent;border:1px solid var(--line)">Caja cerrada hoy a las ${new Date(R.cierre.t).toLocaleTimeString('es-VE',{hour:'2-digit',minute:'2-digit'})}. Puedes volver a cerrarla si sigues vendiendo.</div>`:''}
     <button type="button" class="cta-dark" data-act="cierre"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Cerrar caja de hoy</button>`;
 }
@@ -412,7 +416,7 @@ function vCierre(){
       <div class="row"><span>Vendido (${R.n} ${R.n===1?'venta':'ventas'})</span><span class="num">${usd(R.total)}</span></div>
       <div class="row"><span>Costo de lo vendido</span><span class="num">−${usd(R.costo)}</span></div>
       <div class="row total" style="font-weight:800"><span>Ganancia</span><span class="num" style="color:var(--ok)">${usd(R.gan)}</span></div>
-      <div class="row muted" style="font-size:.85rem"><span>Quedó fiado hoy</span><span class="num" style="color:var(--bad)">${usd(R.por.fiado.u)}</span></div>
+      <div class="row muted" style="font-size:.85rem"><span>Quedó a crédito hoy</span><span class="num" style="color:var(--bad)">${usd(R.por.fiado.u)}</span></div>
       ${R.abonos?`<div class="row muted" style="font-size:.85rem"><span>Abonos recibidos</span><span class="num">${usd(R.abonos)}</span></div>`:''}
     </section>
     <div class="field"><label for="cNota">Nota del día (opcional)</label><input id="cNota" placeholder="Ej. Di vuelto de más en la tarde"></div>
@@ -437,7 +441,7 @@ function textoResumen(){
   const L=[`Cierre de caja · ${fecha}`,`Vendido: ${usd(R.total)} (${R.n} ventas)`,`Ganancia: ${usd(R.gan)}`,
     `Efectivo $: ${usd(cu)}${Math.abs(du)>=0.005?' ('+(du<0?'faltan ':'sobran ')+usd(Math.abs(du))+')':''}`,
     `Efectivo Bs: ${bs(cb)}${Math.abs(db)>=0.005?' ('+(db<0?'faltan ':'sobran ')+bs(Math.abs(db))+')':''}`,
-    `Pago móvil: ${bs(R.por.pm.b)}`,`Punto: ${usd(R.por.punto.u)}`,`Quedó fiado: ${usd(R.por.fiado.u)}`];
+    `Pago móvil: ${bs(R.por.pm.b)}`,`Punto: ${usd(R.por.punto.u)}`,`Quedó a crédito: ${usd(R.por.fiado.u)}`];
   const nota=($('#cNota')?.value||'').trim();if(nota)L.push('Nota: '+nota);
   if(S.cfg.tasa)L.push(`Tasa: Bs ${nf.format(S.cfg.tasa)} / $`);
   return L.join('\n');
@@ -477,9 +481,9 @@ function vFiado(){
     return `<div class="item"><div class="grow"><div class="t">${esc(c.nombre)}</div><div class="sub">${c.tel?esc(c.tel)+' · ':''}${ult?'Último movimiento '+new Date(ult.t).toLocaleDateString('es-VE'):'Sin movimientos'}</div></div>
     <div style="text-align:right"><div class="num" style="font-weight:600;color:${d>0?'var(--bad)':'var(--ok)'}">${usd(d)}</div><div class="sub num">${S.cfg.tasa&&d>0?bs(toBs(d)):''}</div></div>
     </div><div class="item fiadobtns" style="padding-top:0"><button type="button" class="mini" data-estado="${c.id}">Estado</button><button type="button" class="mini" data-editcli="${c.id}">Editar</button><button type="button" class="mini" data-deuda="${c.id}">+ Deuda</button><button type="button" class="mini" data-abono="${c.id}" ${d>0?'':'disabled'}>Abonar</button></div>`}).join('');
-  return `${avisos()}<div class="row"><h2>Fiado</h2><button type="button" class="btn" data-act="nuevoCli">+ Cliente</button></div>
+  return `${avisos()}<div class="row"><h2>Crédito</h2><button type="button" class="btn" data-act="nuevoCli">+ Cliente</button></div>
     <div class="kpi hero"><div class="label">Te deben en total</div><div class="v">${usd(total)}</div><div class="bs">${S.cfg.tasa?bs(toBs(total)):''}</div></div>
-    <div class="list">${items||'<div class="empty">Aún no tienes clientes con cuenta. Agrégalos aquí o al vender con “Fiado”.</div>'}</div>`;
+    <div class="list">${items||'<div class="empty">Aún no tienes clientes con cuenta. Agrégalos aquí o al vender con “Crédito”.</div>'}</div>`;
 }
 function filtrar(per){
   const d=new Date();d.setHours(0,0,0,0);let desde=d.getTime();
@@ -502,7 +506,7 @@ function vReportes(){
     const f=new Date(m.t);const hora=f.toLocaleDateString('es-VE',{day:'2-digit',month:'2-digit'})+' '+f.toLocaleTimeString('es-VE',{hour:'2-digit',minute:'2-digit'});
     let t,sub,monto;
     if(m.tipo==='venta'){t=m.items.map(i=>i.cant+' '+i.nombre).join(', ');sub=(METODOS.find(x=>x[0]===m.metodo)||['',''])[1]+(m.cliente?' · '+(cliente(m.cliente)?.nombre||''):'');monto=usd(m.total)}
-    else if(m.tipo==='deuda'){t=(m.nota||'Deuda anotada')+': '+(cliente(m.cliente)?.nombre||'cliente');sub='Fiado sin productos';monto=usd(m.monto)}
+    else if(m.tipo==='deuda'){t=(m.nota||'Deuda anotada')+': '+(cliente(m.cliente)?.nombre||'cliente');sub='Crédito sin productos';monto=usd(m.monto)}
     else if(m.tipo==='abono'){t='Abono de '+(cliente(m.cliente)?.nombre||'cliente');sub=(METODOS.find(x=>x[0]===m.metodo)||['',''])[1];monto=usd(m.monto)}
     else if(m.tipo==='cierre'){t='Cierre de caja';sub=m.nota||((Math.abs(m.dif?.usd||0)<0.005&&Math.abs(m.dif?.bs||0)<0.005)?'Todo cuadró':'Con diferencias');monto=usd(m.total)}
     else{t='Producción: '+m.cant+' '+m.nombre;sub='Costo '+usd(m.costoTotal);monto='+'+m.cant}
@@ -514,7 +518,7 @@ function vReportes(){
       <div class="kpi"><div class="label">Vendido</div><div class="v">${usd(total)}</div><div class="bs">${ventas.length} ventas</div></div>
       <div class="kpi"><div class="label">Costo</div><div class="v">${usd(costo)}</div><div class="bs">de lo vendido</div></div>
       <div class="kpi"><div class="label">Cobrado</div><div class="v">${usd(cobrado)}</div><div class="bs">incluye abonos</div></div>
-      <div class="kpi"><div class="label">Quedó fiado</div><div class="v" style="color:${fiado?'var(--bad)':'inherit'}">${usd(fiado)}</div><div class="bs">en este periodo</div></div>
+      <div class="kpi"><div class="label">Quedó a crédito</div><div class="v" style="color:${fiado?'var(--bad)':'inherit'}">${usd(fiado)}</div><div class="bs">en este periodo</div></div>
     </div>
     <section class="bars" aria-label="Ventas por producto"><h3>Por producto</h3>${pp.length?pp.map(([n,x])=>`<div class="bar"><div class="row"><span>${esc(n)}</span><span class="num muted">${x.u} und · ${usd(x.v)}</span></div><div class="track"><div class="fill" style="width:${x.v/maxV*100}%"></div></div></div>`).join(''):'<p class="muted" style="margin:0">Sin ventas en este periodo.</p>'}</section>
     <section class="bars" aria-label="Ventas por forma de pago"><h3>Por forma de pago</h3>${pm.length?pm.map(([l,v])=>`<div class="bar alt"><div class="row"><span>${l}</span><span class="num muted">${usd(v)}</span></div><div class="track"><div class="fill" style="width:${v/maxM*100}%"></div></div></div>`).join(''):'<p class="muted" style="margin:0">Sin ventas en este periodo.</p>'}</section>
@@ -607,7 +611,7 @@ function sAnular(mid){
 }
 async function cobrar(){
   const lines=cartLines();if(!lines.length)return;
-  if(S.metodo==='fiado'&&!S.cliente){toast('Elige el cliente que se lleva fiado.');return}
+  if(S.metodo==='fiado'&&!S.cliente){toast('Elige el cliente que se lleva a crédito.');return}
   const items=lines.map(l=>({pid:l.p.id,nombre:l.p.nombre,cant:l.q,precio:l.p.precio,costo:l.p.costo}));
   const total=cartTotal(),costo=r2(items.reduce((s,i)=>s+i.costo*i.cant,0));
   for(const l of lines)l.p.stock-=l.q;
@@ -616,20 +620,54 @@ async function cobrar(){
   S.cart={};await save();
   try{await S.store.addMov(m)}catch(e){toast('No se registró la venta. Revisa tu conexión.');return}
   S.ultima=m.id;
-  render();toast(S.metodo==='fiado'?'Fiado anotado: '+usd(total):'Venta cobrada: '+usd(total)+(S.cfg.tasa?' · '+bs(toBs(total)):''));
+  render();toast(S.metodo==='fiado'?'Crédito anotado: '+usd(total):'Venta cobrada: '+usd(total)+(S.cfg.tasa?' · '+bs(toBs(total)):''));
 }
 
 /* ---------- Ajustes ---------- */
 function sAjustes(){
-  const t=S.cfg.tema||'auto';
+  const t=S.cfg.tema||'auto';const P=Object.assign({titular:'',cedula:'',telefono:'',banco:'',qr:'',enContado:false},S.cfg.pago||{});S.tmpQr=P.qr||'';
   const op=[['auto','Automático','Como el teléfono'],['claro','Claro','Fondo claro'],['oscuro','Oscuro','Para la noche'],['sol','Modo sol','Más contraste y letra grande']];
   sheet(`<h2>Ajustes</h2>
     <div class="field"><label for="fNeg">Nombre del negocio</label><input id="fNeg" name="negocio" value="${esc(S.cfg.negocio||'Caja Crujiente')}" placeholder="Ej. Snacks El Pipo"></div>
     <div class="field"><label for="fPie">Mensaje al pie del recibo (opcional)</label><input id="fPie" name="pie" value="${esc(S.cfg.pie||'')}" placeholder="Ej. Pago móvil: 0414-0000000"></div>
     <fieldset style="border:0;padding:0;margin:0;display:flex;flex-direction:column;gap:6px"><legend class="label" style="margin-bottom:6px">Apariencia</legend>
       <div class="themes">${op.map(([k,l,d])=>`<label><input type="radio" name="tema" value="${k}" ${t===k?'checked':''}>${l}<small>${d}</small></label>`).join('')}</div></fieldset>
+    <fieldset style="border:0;padding:0;margin:0;display:flex;flex-direction:column;gap:10px"><legend class="label" style="margin-bottom:6px">Datos de pago móvil (para tus recibos)</legend>
+      <p class="muted" style="margin:0;font-size:.82rem">Se guardan solo en este teléfono y en tus respaldos. Salen en las ventas a crédito y en los estados de cuenta.</p>
+      <div class="field"><label for="fPtit">Titular</label><input id="fPtit" name="ptit" value="${esc(P.titular)}" placeholder="Nombre y apellido"></div>
+      <div class="two"><div class="field"><label for="fPci">Cédula</label><input id="fPci" name="pci" value="${esc(P.cedula)}" placeholder="V-00.000.000"></div>
+      <div class="field"><label for="fPtel">Teléfono</label><input id="fPtel" name="ptel" inputmode="tel" value="${esc(P.telefono)}" placeholder="0414-000.00.00"></div></div>
+      <div class="field"><label for="fPban">Banco</label><input id="fPban" name="pban" value="${esc(P.banco)}" placeholder="Ej. 0105 - Mercantil"></div>
+      <div class="field"><span class="label" style="text-transform:none;letter-spacing:0;font-size:.8rem">Código QR de pago (opcional)</span>
+        <div class="qrbox"><img id="qrPrev" alt="Vista previa del código QR" ${S.tmpQr?`src="${S.tmpQr}"`:'hidden'}>
+          <div style="display:flex;flex-direction:column;gap:6px;flex:1;min-width:0"><span class="muted" style="font-size:.8rem" id="qrInfo">${S.tmpQr?'Imagen cargada':'Sube una captura del QR de tu banco'}</span>
+          <div class="actions"><label for="fQr" class="mini" style="text-align:center;cursor:pointer">${S.tmpQr?'Cambiar':'Subir imagen'}</label><button type="button" class="mini" data-act="quitarQr" ${S.tmpQr?'':'hidden'} id="qrDel">Quitar</button></div></div>
+          <input type="file" id="fQr" accept="image/*" hidden></div></div>
+      <label class="chkrow" for="fPcon"><input type="checkbox" id="fPcon" name="pcon" ${P.enContado?'checked':''}>Mostrarlos también en recibos de ventas pagadas</label>
+    </fieldset>
     ${acts('Guardar')}`,
-  async fd=>{S.cfg.negocio=String(fd.get('negocio')||'').trim()||'Caja Crujiente';S.cfg.pie=String(fd.get('pie')||'').trim();S.cfg.tema=String(fd.get('tema')||'auto');await save();render();toast('Ajustes guardados')});
+  async fd=>{S.cfg.negocio=String(fd.get('negocio')||'').trim()||'Caja Crujiente';S.cfg.pie=String(fd.get('pie')||'').trim();S.cfg.tema=String(fd.get('tema')||'auto');
+    S.cfg.pago={titular:String(fd.get('ptit')||'').trim(),cedula:String(fd.get('pci')||'').trim(),telefono:String(fd.get('ptel')||'').trim(),banco:String(fd.get('pban')||'').trim(),qr:S.tmpQr||'',enContado:!!fd.get('pcon')};
+    await save();render();toast('Ajustes guardados')});
+}
+function cargarQr(file){
+  if(!file||!/^image\//.test(file.type)){toast('Elige una imagen.');return}
+  const fr=new FileReader();
+  fr.onload=()=>{const img=new Image();img.onload=()=>{
+      const max=720,k=Math.min(1,max/Math.max(img.width,img.height));
+      const c=document.createElement('canvas');c.width=Math.round(img.width*k);c.height=Math.round(img.height*k);
+      const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);x.imageSmoothingEnabled=k<1;x.drawImage(img,0,0,c.width,c.height);
+      S.tmpQr=c.toDataURL('image/png');
+      const p=$('#qrPrev');if(p){p.src=S.tmpQr;p.hidden=false}
+      const i=$('#qrInfo');if(i)i.textContent='Imagen cargada. Toca Guardar.';
+      const d=$('#qrDel');if(d)d.hidden=false;};
+    img.onerror=()=>toast('No se pudo leer esa imagen.');img.src=fr.result};
+  fr.readAsDataURL(file);
+}
+function pagoLineas(){
+  const P=S.cfg.pago||{};const L=[];
+  if(P.banco)L.push('Banco: '+P.banco);if(P.telefono)L.push('Teléfono: '+P.telefono);if(P.cedula)L.push('Cédula: '+P.cedula);if(P.titular)L.push('Titular: '+P.titular);
+  return(L.length||P.qr)?{lineas:L,qr:P.qr||''}:null;
 }
 /* ---------- Recibos e imágenes para compartir ---------- */
 function fitText(x,str,maxW){str=String(str);if(x.measureText(str).width<=maxW)return str;while(str.length>1&&x.measureText(str+'…').width>maxW)str=str.slice(0,-1);return str+'…'}
@@ -637,7 +675,11 @@ async function ticketPNG(t){
   try{await document.fonts.ready}catch(e){}
   const W=600,P=36,LH=36,SANS='"Nunito Sans", system-ui, sans-serif',MONO='"IBM Plex Mono", ui-monospace, monospace',DISP='"Bricolage Grotesque", "Nunito Sans", sans-serif';
   const extra=t.extra||[];
-  const H=176+t.lineas.length*LH+34+t.totales.length*44+(extra.length?16+extra.length*28:0)+96;
+  let qrImg=null;
+  if(t.pago&&t.pago.qr){try{qrImg=new Image();qrImg.src=t.pago.qr;await qrImg.decode()}catch(e){qrImg=null}}
+  const QW=300,qh=qrImg?Math.round(QW*qrImg.height/qrImg.width):0;
+  const pagoH=t.pago?(28+40+t.pago.lineas.length*30+(qrImg?qh+20:0)+20):0;
+  const H=176+t.lineas.length*LH+34+t.totales.length*44+(extra.length?16+extra.length*28:0)+pagoH+96;
   const c=document.createElement('canvas'),sc=2;c.width=W*sc;c.height=H*sc;const x=c.getContext('2d');x.scale(sc,sc);
   x.fillStyle='#FFFFFF';x.fillRect(0,0,W,H);
   x.fillStyle='#1E5B37';x.fillRect(0,0,W,124);x.fillStyle='#F2B705';x.fillRect(0,124,W,6);
@@ -657,6 +699,14 @@ async function ticketPNG(t){
     x.font=(i===0?'800 24px ':'600 19px ')+SANS;x.fillText(tt.izq,P,y);y+=44;
   });
   if(extra.length){y+=4;x.fillStyle='#5A6450';x.font='600 17px '+SANS;for(const e of extra){x.fillText(fitText(x,e,W-2*P),P,y);y+=28}}
+  if(t.pago){
+    y+=12;const top=y,bh=pagoH-28;
+    x.fillStyle='#FCEFC2';x.beginPath();if(x.roundRect)x.roundRect(P-12,top,W-2*P+24,bh,16);else x.rect(P-12,top,W-2*P+24,bh);x.fill();
+    y=top+36;x.fillStyle='#1E5B37';x.font='800 20px '+SANS;x.fillText('Datos para pagar · Pago móvil',P,y);y+=34;
+    x.fillStyle='#1D2418';x.font='600 19px '+SANS;for(const l of t.pago.lineas){x.fillText(fitText(x,l,W-2*P),P,y);y+=30}
+    if(qrImg){x.imageSmoothingEnabled=false;x.drawImage(qrImg,(W-QW)/2,y-8,QW,qh);x.imageSmoothingEnabled=true;y+=qh+20}
+    y=top+bh;
+  }
   x.fillStyle='#1E5B37';x.font='800 19px '+SANS;x.textAlign='center';x.fillText(fitText(x,(S.cfg.pie||'').trim()||'¡Gracias por su compra!',W-2*P),W/2,H-44);x.textAlign='left';
   return new Promise(r=>c.toBlob(r,'image/png'));
 }
@@ -677,8 +727,9 @@ async function recibo(mid){
   const extra=['Forma de pago: '+((METODOS.find(x=>x[0]===m.metodo)||['',''])[1])];
   if(m.cliente){const c=cliente(m.cliente);if(c)extra.push('Cliente: '+c.nombre);extra.push('Debe en total: '+usd(deuda(m.cliente)))}
   if(tasa)extra.push('Tasa: Bs '+nf.format(tasa)+' por $');
-  const blob=await ticketPNG({titulo:m.metodo==='fiado'?'Nota de fiado':'Recibo',fecha:fechaHora(m.t),lineas,totales,extra});
-  sImagen(blob,'recibo-'+new Date(m.t).toISOString().slice(0,10)+'.png',m.metodo==='fiado'?'Nota de fiado':'Recibo de venta');
+  const pg=(m.metodo==='fiado'||(S.cfg.pago&&S.cfg.pago.enContado))?pagoLineas():null;
+  const blob=await ticketPNG({titulo:m.metodo==='fiado'?'Venta a crédito':'Recibo',fecha:fechaHora(m.t),lineas,totales,extra,pago:pg});
+  sImagen(blob,'recibo-'+new Date(m.t).toISOString().slice(0,10)+'.png',m.metodo==='fiado'?'Venta a crédito':'Recibo de venta');
 }
 async function estadoCuenta(cid){
   const c=cliente(cid);if(!c)return;
@@ -693,7 +744,7 @@ async function estadoCuenta(cid){
   const totales=[{izq:'Debe en total',der:usd(d),color:d>0?'#A3150D':'#1E7A45'}];if(S.cfg.tasa&&d>0)totales.push({izq:'En bolívares (tasa de hoy)',der:bs(toBs(d))});
   const extra=['Cliente: '+c.nombre];if(ms.length>ult.length)extra.push(`Se muestran los últimos ${ult.length} de ${ms.length} movimientos`);
   if(S.cfg.tasa)extra.push('Tasa: Bs '+nf.format(S.cfg.tasa)+' por $');
-  const blob=await ticketPNG({titulo:'Estado de cuenta',fecha:fechaHora(Date.now()),lineas,totales,extra});
+  const blob=await ticketPNG({titulo:'Estado de cuenta',fecha:fechaHora(Date.now()),lineas,totales,extra,pago:d>0?pagoLineas():null});
   sImagen(blob,'estado-de-cuenta-'+c.nombre.replace(/[^\wáéíóúñ]+/gi,'-').toLowerCase()+'.png','Estado de cuenta de '+c.nombre);
 }
 
@@ -722,6 +773,7 @@ document.addEventListener('click',e=>{
   if(d.act==='nuevoCli')sCliente();
   if(d.act==='nuevoProd')sProducto();
   if(d.act==='ajustes')sAjustes();
+  if(d.act==='quitarQr'){S.tmpQr='';const p=$('#qrPrev');if(p){p.hidden=true;p.removeAttribute('src')}const i=$('#qrInfo');if(i)i.textContent='Sin imagen. Toca Guardar.';b.hidden=true;return}
   if(d.recibo){recibo(d.recibo);return}
   if(d.estado){estadoCuenta(d.estado);return}
   if(d.act==='cierre'){S.view='cierre';render();$('#main').scrollTop=0}
@@ -731,7 +783,7 @@ document.addEventListener('click',e=>{
   if(d.act==='importar')$('#fileImport').click();
   if(b.id==='btnInstall'&&installEvt){installEvt.prompt();installEvt.userChoice.finally(()=>{installEvt=null;b.hidden=true})}
 });
-document.addEventListener('change',e=>{if(e.target.id==='selCli'){S.cliente=e.target.value;render()}if(e.target.id==='fileImport'){const f=e.target.files[0];e.target.value='';if(f)importar(f)}});
+document.addEventListener('change',e=>{if(e.target.id==='selCli'){S.cliente=e.target.value;render()}if(e.target.id==='fQr'){const f=e.target.files[0];e.target.value='';if(f)cargarQr(f)}if(e.target.id==='fileImport'){const f=e.target.files[0];e.target.value='';if(f)importar(f)}});
 document.addEventListener('input',e=>{if(e.target.id==='cUsd'||e.target.id==='cBs')updCierre()});
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeSheet()});
 
