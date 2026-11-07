@@ -45,7 +45,7 @@ header .wrap{display:flex;align-items:center;justify-content:space-between;gap:1
 main{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
 main .wrap{padding-block:16px 24px;display:flex;flex-direction:column;gap:16px}
 nav.tabs{background:var(--surface);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
-nav.tabs .wrap{display:grid;grid-template-columns:repeat(4,1fr)}
+nav.tabs .wrap{display:grid;grid-template-columns:repeat(5,minmax(0,1fr))}
 nav.tabs button{background:none;border:0;color:var(--muted);font:600 .78rem var(--f-body);padding:10px 4px 12px;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer}
 nav.tabs button svg{width:22px;height:22px}
 nav.tabs button[aria-current="true"]{color:var(--leaf)}
@@ -60,16 +60,50 @@ h3{font-family:var(--f-display);font-weight:600;font-size:1rem;margin:0}
 .banner{background:var(--gold-soft);border-radius:12px;padding:12px 14px;font-size:.9rem}
 .banner.bad{background:var(--bad-soft)}
 /* productos para vender */
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px}
-.prod{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px;text-align:left;cursor:pointer;color:var(--ink);font:inherit;display:flex;flex-direction:column;gap:6px;min-height:104px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+@media (min-width:600px){.grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.pcard{position:relative}
+.prod{position:relative;width:100%;background:var(--surface);border:2px solid var(--line);border-radius:18px;padding:12px;text-align:left;cursor:pointer;color:var(--ink);font:inherit;display:flex;flex-direction:column;align-items:flex-start;gap:5px;min-height:150px;box-sizing:border-box}
+.prod.on{border-color:var(--leaf)}
 .prod:active{transform:scale(.98)}
-.prod .n{font-weight:800;line-height:1.2}
-.prod .p{font-family:var(--f-num);font-weight:600;font-size:1.05rem}
+.prod .ill{width:54px;height:54px;border-radius:16px;display:grid;place-items:center}
+.prod .ill svg{width:34px;height:34px}
+.prod .n{font-weight:800;font-size:1.05rem;line-height:1.15}
+.prod .p{font-family:var(--f-num);font-weight:600;font-size:1.35rem}
 .prod .s{font-size:.75rem;color:var(--muted)}
 .prod .s.low{color:var(--warn);font-weight:800}
 .prod .s.zero{color:var(--bad);font-weight:800}
-.prod .q{position:absolute;top:-8px;right:-6px;background:var(--leaf);color:var(--leaf-ink);border-radius:999px;min-width:26px;height:26px;display:grid;place-items:center;font:600 .85rem var(--f-num);padding:0 6px;box-sizing:border-box}
-.swatch{width:22px;height:6px;border-radius:3px}
+.prod .q{position:absolute;top:10px;right:10px;background:var(--leaf);color:var(--leaf-ink);border-radius:999px;min-width:32px;height:32px;display:grid;place-items:center;font:600 1rem var(--f-num);padding:0 8px;box-sizing:border-box}
+.minus{position:absolute;right:10px;bottom:10px;width:40px;height:40px;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font-size:1.3rem;cursor:pointer;display:grid;place-items:center}
+/* barra de cobro fija */
+#dock{background:var(--surface);border-top:1px solid var(--line);box-shadow:0 -6px 18px rgba(0,0,0,.08)}
+#dock .wrap{padding-block:10px;display:flex;flex-direction:column;gap:10px}
+.paychips{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin:0 -2px;padding:0 2px}
+.paychips .chip{flex:none;padding:8px 11px;font-size:.8rem;min-height:36px}
+.paybar{display:flex;align-items:center;gap:10px}
+.paybar .sum{flex:1;min-width:0;display:flex;flex-direction:column}
+.paybar .sum .u{font:600 1.5rem var(--f-num);line-height:1.1}
+.paybar .icon{width:48px;height:52px;border-radius:14px;border:1px solid var(--line);background:var(--surface);color:var(--ink);display:grid;place-items:center;cursor:pointer}
+.paybar .go{height:52px;padding:0 22px;border-radius:14px;font-size:1.05rem}
+.dockcli{display:flex;gap:8px;align-items:center}
+.dockcli select{flex:1;min-width:0;font:600 .95rem var(--f-body);padding:9px 10px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink)}
+/* inicio */
+.money{display:flex;flex-direction:column;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px}
+.money .bar .fill.bad{background:var(--bad)}
+.cta-dark{background:var(--ink);color:var(--bg);border:0;border-radius:14px;min-height:52px;font:800 1rem var(--f-body);display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;width:100%}
+.kpi.hero .minis{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.kpi.hero .minis div{background:rgba(255,255,255,.14);border-radius:12px;padding:8px 10px}
+.kpi.hero .minis b{display:block;font:600 1.15rem var(--f-num)}
+/* cierre */
+.ctable{background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.crow{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr) minmax(0,1.1fr);gap:8px;padding:10px 12px;align-items:center;border-top:1px solid var(--line)}
+.crow.head{border-top:0;background:var(--bg);font-size:.7rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.crow label{font-weight:800}
+.crow input[type=text]{width:100%;box-sizing:border-box;border:2px solid var(--line);border-radius:10px;padding:8px;font:600 .9rem var(--f-num);background:var(--bg);color:var(--ink)}
+.crow input.ok{border-color:var(--ok)}.crow input.off{border-color:var(--warn)}
+.crow .chk{display:flex;align-items:center;gap:6px;font-size:.85rem}
+.crow .chk input{width:22px;height:22px;accent-color:var(--leaf)}
+.diff{padding:0 12px 10px;display:flex;justify-content:flex-end}
 /* carrito */
 .cart{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:12px}
 .line{display:grid;grid-template-columns:1fr auto auto;gap:10px;align-items:center}
@@ -119,7 +153,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .actions{display:flex;gap:10px}
 .actions .btn{flex:1}
-.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(84px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:999px;font-weight:700;z-index:30;font-size:.9rem;max-width:calc(100% - 32px)}
+.toast{position:fixed;left:50%;transform:translateX(-50%);top:calc(80px + env(safe-area-inset-top,0px));background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:999px;font-weight:700;z-index:30;font-size:.9rem;max-width:calc(100% - 32px)}
 .empty{text-align:center;padding:24px 14px;color:var(--muted)}
 .loading{display:grid;place-items:center;height:100%;color:var(--muted)}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
@@ -138,6 +172,7 @@ header .wrap{padding-top:calc(12px + env(safe-area-inset-top,0px))}
   <div class="hbtns"><button class="install" id="btnInstall" type="button" hidden>Instalar</button><button class="tasa" id="btnTasa" type="button">Tasa: —</button></div>
 </div></header>
 <main id="main"><div class="loading">Abriendo tu caja…</div></main>
+<div id="dock" hidden></div>
 <nav class="tabs" aria-label="Secciones"><div class="wrap" id="tabs"></div></nav>
 <div id="layer"></div>
 <input type="file" id="fileImport" accept="application/json,.json" hidden>
@@ -145,14 +180,24 @@ header .wrap{padding-top:calc(12px + env(safe-area-inset-top,0px))}
 <script>
 (function(){
 const ICONS={
+ inicio:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>',
  vender:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16l-1.5 12h-13z"/><path d="M9 7V5a3 3 0 0 1 6 0v2"/></svg>',
  inventario:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8l9-5 9 5v8l-9 5-9-5z"/><path d="M3 8l9 5 9-5M12 13v8"/></svg>',
  fiado:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="4"/><path d="M2 21c0-4 3-6 7-6s7 2 7 6"/><path d="M17 11h5M19.5 8.5v5"/></svg>',
  reportes:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>'
 };
-const TABS=[['vender','Vender'],['inventario','Inventario'],['fiado','Fiado'],['reportes','Reportes']];
+const TABS=[['inicio','Inicio'],['vender','Vender'],['inventario','Inventario'],['fiado','Fiado'],['reportes','Reportes']];
 const METODOS=[['usd','Efectivo $'],['bs','Efectivo Bs'],['pm','Pago móvil'],['punto','Punto'],['fiado','Fiado']];
 const COLORS=['#E0A100','#8B5A2B','#5E8C31','#C0392B','#7B6D3A','#2E86AB','#9B59B6','#16A085'];
+const ILLU={
+ papitas:'<svg viewBox="0 0 34 34" aria-hidden="true"><path d="M8 7l3-2 3 2 3-2 3 2 3-2 3 2v20a2 2 0 0 1-2 2H10a2 2 0 0 1-2-2z" fill="#E0A100"/><ellipse cx="17" cy="18" rx="5.5" ry="4" fill="#FFF3C9"/><circle cx="15.5" cy="17" r="0.9" fill="#E0A100"/><circle cx="18.5" cy="19" r="0.9" fill="#E0A100"/></svg>',
+ mani:'<svg viewBox="0 0 34 34" aria-hidden="true"><g transform="rotate(-35 17 17)"><ellipse cx="17" cy="10.5" rx="6" ry="6.5" fill="#B07A45"/><ellipse cx="17" cy="23.5" rx="6" ry="6.5" fill="#B07A45"/><rect x="13" y="13" width="8" height="8" fill="#B07A45"/><path d="M13.5 9h7M13 24h8" stroke="#8B5A2B" stroke-width="1.2"/></g></svg>',
+ tostones:'<svg viewBox="0 0 34 34" aria-hidden="true"><ellipse cx="13" cy="20" rx="9" ry="7" fill="#D9A21B"/><ellipse cx="13" cy="20" rx="5" ry="3.6" fill="#F2C64B"/><ellipse cx="22" cy="13" rx="8" ry="6.5" fill="#E8B12E"/><ellipse cx="22" cy="13" rx="4.4" ry="3.2" fill="#F7D777"/></svg>',
+ platanitos:'<svg viewBox="0 0 34 34" fill="none" aria-hidden="true"><path d="M6 24c6-1 14-6 20-16" stroke="#D9A21B" stroke-width="4" stroke-linecap="round"/><path d="M8 28c7-2 15-7 20-15" stroke="#E8B12E" stroke-width="4" stroke-linecap="round"/><path d="M5 19c6-2 11-6 15-13" stroke="#C8901A" stroke-width="4" stroke-linecap="round"/></svg>',
+ chicharron:'<svg viewBox="0 0 34 34" aria-hidden="true"><path d="M5 18c2-5 5-3 7-7s6-2 8 0 5-2 8 2 1 7 0 9-3 5-7 4-5 3-9 1-8-2-7-9z" fill="#C9822E"/><path d="M9 17c3 1 5-2 8-1s5 3 8 1" stroke="#F2C27A" stroke-width="1.6" fill="none" stroke-linecap="round"/></svg>',
+ yuquitas:'<svg viewBox="0 0 34 34" fill="none" aria-hidden="true"><path d="M9 28l5-22M16 29l2-23M22 28l4-21" stroke="#E7D6A6" stroke-width="4.5" stroke-linecap="round"/><path d="M9 28l5-22M16 29l2-23M22 28l4-21" stroke="#C9A45A" stroke-width="1.2" stroke-linecap="round"/></svg>'
+};
+const illu=p=>ILLU[p.id]||`<svg viewBox="0 0 34 34" aria-hidden="true"><path d="M8 7l3-2 3 2 3-2 3 2 3-2 3 2v20a2 2 0 0 1-2 2H10a2 2 0 0 1-2-2z" fill="${esc(p.color)}"/><text x="17" y="22" text-anchor="middle" font-size="11" font-weight="800" fill="#fff" font-family="sans-serif">${esc((p.nombre||'?').trim().charAt(0).toUpperCase())}</text></svg>`;
 const DEFAULT_CFG={tasa:0,tasaFecha:'',productos:[
  {id:'papitas',nombre:'Papitas fritas',precio:1,costo:0.45,stock:0,min:10,color:COLORS[0]},
  {id:'mani',nombre:'Maní salado',precio:1,costo:0.4,stock:0,min:10,color:COLORS[1]},
@@ -173,7 +218,7 @@ const toBs=n=>(S.cfg.tasa||0)*(+n||0);
 const num=v=>{const x=parseFloat(String(v).replace(',','.'));return isFinite(x)?x:0};
 const hoyStr=()=>new Date().toLocaleDateString('es-VE');
 
-const S={cfg:null,movs:[],cart:{},view:'vender',metodo:'usd',cliente:'',periodo:'hoy',store:null,remote:false};
+const S={cfg:null,movs:[],cart:{},view:'inicio',metodo:'usd',cliente:'',periodo:'hoy',store:null,remote:false};
 
 /* ---------- Almacenamiento: todo queda en este teléfono (IndexedDB) ---------- */
 function IDBStore(){
@@ -251,9 +296,11 @@ let toastT;function toast(msg){clearTimeout(toastT);let t=$('.toast');if(!t){t=d
 function render(){
   if(!S.cfg)return;
   const tb=$('#btnTasa');tb.textContent=S.cfg.tasa?('Bs '+nf.format(S.cfg.tasa)+' / $'):'Fijar tasa';tb.classList.toggle('off',!S.cfg.tasa);
-  $('#tabs').innerHTML=TABS.map(([k,l])=>`<button type="button" data-tab="${k}" aria-current="${S.view===k}">${ICONS[k]}<span>${l}</span><i class="dot"></i></button>`).join('');
-  const v={vender:vVender,inventario:vInventario,fiado:vFiado,reportes:vReportes}[S.view]();
+  $('#tabs').innerHTML=TABS.map(([k,l])=>`<button type="button" data-tab="${k}" aria-current="${S.view===k||(k==='inicio'&&S.view==='cierre')}">${ICONS[k]}<span>${l}</span><i class="dot"></i></button>`).join('');
+  const v={inicio:vInicio,cierre:vCierre,vender:vVender,inventario:vInventario,fiado:vFiado,reportes:vReportes}[S.view]();
   $('#main').innerHTML=`<div class="wrap">${v}</div>`;
+  renderDock();
+  if(S.view==='cierre')updCierre();
 }
 function avisos(){
   let h='';
@@ -264,33 +311,121 @@ function avisos(){
   return h;
 }
 function vVender(){
-  const lines=cartLines(),tot=cartTotal();
   const grid=S.cfg.productos.map(p=>{
     const q=S.cart[p.id]||0;const left=p.stock-q;
     const cls=left<=0?'zero':left<=p.min?'low':'';
-    return `<button type="button" class="prod" data-add="${p.id}" aria-label="Agregar ${esc(p.nombre)}">
-      <span class="swatch" style="background:${esc(p.color)}"></span>
+    return `<div class="pcard"><button type="button" class="prod ${q?'on':''}" data-add="${p.id}" aria-label="Agregar ${esc(p.nombre)}">
+      <span class="ill" style="background:color-mix(in srgb, ${esc(p.color)} 20%, transparent)">${illu(p)}</span>
       <span class="n">${esc(p.nombre)}</span>
       <span class="p">${usd(p.precio)}</span>
       <span class="s ${cls}">${left<=0?'Sin stock':'Quedan '+left}</span>
-      ${q?`<span class="q">${q}</span>`:''}</button>`}).join('');
-  let cart='';
-  if(lines.length){
-    const fiadoOk=S.metodo!=='fiado'||S.cliente;
-    cart=`<section class="cart" aria-label="Venta actual">
-      <div class="row"><h3>Venta actual</h3><button type="button" class="mini" data-act="vaciar">Vaciar</button></div>
-      ${lines.map(l=>`<div class="line"><div><div style="font-weight:800">${esc(l.p.nombre)}</div><div class="muted num" style="font-size:.8rem">${usd(l.p.precio)} c/u</div></div>
-        <div class="step"><button type="button" data-dec="${l.p.id}" aria-label="Quitar uno">−</button><span class="num">${l.q}</span><button type="button" data-add="${l.p.id}" aria-label="Agregar uno">+</button></div>
-        <div class="num" style="min-width:64px;text-align:right">${usd(l.p.precio*l.q)}</div></div>`).join('')}
-      <div class="total row"><span class="label">Total</span><div style="text-align:right"><div class="big">${usd(tot)}</div><div class="num muted">${S.cfg.tasa?bs(toBs(tot)):'Bs —'}</div></div></div>
-      <div><div class="label" style="margin-bottom:6px">Forma de pago</div><div class="chips">${METODOS.map(([k,l])=>`<button type="button" class="chip" data-met="${k}" aria-pressed="${S.metodo===k}">${l}</button>`).join('')}</div></div>
-      ${S.metodo==='fiado'?`<div class="field"><label for="selCli">Cliente</label><div class="row"><select id="selCli"><option value="">Elige un cliente…</option>${S.cfg.clientes.map(c=>`<option value="${c.id}" ${S.cliente===c.id?'selected':''}>${esc(c.nombre)} (debe ${usd(deuda(c.id))})</option>`).join('')}</select><button type="button" class="mini" data-act="nuevoCli">+ Nuevo</button></div></div>`:''}
-      <button type="button" class="btn block" data-act="cobrar" ${fiadoOk?'':'disabled'}>${S.metodo==='fiado'?'Anotar fiado':'Cobrar'} ${usd(tot)}</button>
-    </section>`;
-  }else cart=`<p class="muted" style="margin:0">Toca un producto para empezar la venta.</p>`;
-  const hoy=filtrar('hoy').filter(m=>m.tipo==='venta');const vHoy=r2(hoy.reduce((s,m)=>s+m.total,0));
-  return `${avisos()}<div class="row"><h2>Vender</h2><span class="muted">Hoy: <b class="num">${usd(vHoy)}</b> · ${hoy.length} ventas</span></div>
-    <div class="grid">${grid}</div>${cart}`;
+      ${q?`<span class="q">${q}</span>`:''}</button>
+      ${q?`<button type="button" class="minus" data-dec="${p.id}" aria-label="Quitar un ${esc(p.nombre)}">−</button>`:''}</div>`}).join('');
+  return `${avisos()}<div class="grid">${grid}</div>`;
+}
+function renderDock(){
+  const dock=$('#dock');
+  if(S.view!=='vender'){dock.hidden=true;dock.innerHTML='';return}
+  dock.hidden=false;
+  const lines=cartLines(),tot=cartTotal(),und=lines.reduce((s,l)=>s+l.q,0);
+  const fiadoOk=S.metodo!=='fiado'||S.cliente;
+  dock.innerHTML=`<div class="wrap">
+    <div class="paychips" role="group" aria-label="Forma de pago">${METODOS.map(([k,l])=>`<button type="button" class="chip" data-met="${k}" aria-pressed="${S.metodo===k}">${l}</button>`).join('')}</div>
+    ${S.metodo==='fiado'?`<div class="dockcli"><label for="selCli" class="label">Cliente</label><select id="selCli"><option value="">Elige un cliente…</option>${S.cfg.clientes.map(c=>`<option value="${c.id}" ${S.cliente===c.id?'selected':''}>${esc(c.nombre)} (debe ${usd(deuda(c.id))})</option>`).join('')}</select><button type="button" class="mini" data-act="nuevoCli">+ Nuevo</button></div>`:''}
+    <div class="paybar">
+      <div class="sum"><span class="muted" style="font-size:.78rem">${und?und+(und===1?' producto':' productos'):'Toca un producto'}</span><span class="u">${usd(tot)}</span><span class="num muted" style="font-size:.78rem">${S.cfg.tasa?bs(toBs(tot)):'Bs —'}</span></div>
+      <button type="button" class="icon" data-act="vaciar" aria-label="Vaciar venta" ${und?'':'disabled'}><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg></button>
+      <button type="button" class="btn go" data-act="cobrar" ${und&&fiadoOk?'':'disabled'}>${S.metodo==='fiado'?'Anotar':'Cobrar'}</button>
+    </div></div>`;
+}
+/* ---------- Inicio y cierre de caja ---------- */
+function resumenHoy(){
+  const ms=filtrar('hoy'),v=ms.filter(m=>m.tipo==='venta'),ab=ms.filter(m=>m.tipo==='abono');
+  const por={};METODOS.forEach(([k])=>por[k]={u:0,b:0});
+  const tz=m=>m.tasa||S.cfg.tasa||0;
+  for(const m of v){if(por[m.metodo]){por[m.metodo].u+=m.total;por[m.metodo].b+=m.total*tz(m)}}
+  for(const m of ab){if(por[m.metodo]){por[m.metodo].u+=m.monto;por[m.metodo].b+=m.monto*tz(m)}}
+  const total=r2(v.reduce((s,m)=>s+m.total,0)),costo=r2(v.reduce((s,m)=>s+m.costo,0));
+  return{por,total,costo,gan:r2(total-costo),n:v.length,abonos:r2(ab.reduce((s,m)=>s+m.monto,0)),cierre:ms.find(m=>m.tipo==='cierre')};
+}
+function vInicio(){
+  const R=resumenHoy();
+  const filas=[['usd','Efectivo $'],['pm','Pago móvil'],['bs','Efectivo Bs'],['punto','Punto']];
+  const max=Math.max(0.01,...filas.map(([k])=>R.por[k].u),R.por.fiado.u);
+  const barras=filas.map(([k,l])=>`<div class="bar"><div class="row"><span>${l}</span><span class="num"><b>${usd(R.por[k].u)}</b>${(k==='pm'||k==='bs')&&R.por[k].b?` <span class="muted" style="font-size:.78rem">${bs(R.por[k].b)}</span>`:''}</span></div><div class="track"><div class="fill" style="width:${R.por[k].u/max*100}%"></div></div></div>`).join('')
+   +`<div class="bar"><div class="row"><span>Quedó fiado</span><span class="num" style="color:var(--bad)"><b>${usd(R.por.fiado.u)}</b></span></div><div class="track"><div class="fill bad" style="width:${R.por.fiado.u/max*100}%"></div></div></div>`;
+  const bajos=S.cfg.productos.filter(p=>p.stock<=p.min).sort((a,b)=>a.stock-b.stock);
+  const deben=S.cfg.clientes.map(c=>deuda(c.id)).filter(d=>d>0);const totDeben=r2(deben.reduce((s,d)=>s+d,0));
+  const fecha=new Date().toLocaleDateString('es-VE',{weekday:'long',day:'numeric',month:'long'});
+  return `${avisos()}
+    <div class="kpi hero"><div class="label">Vendido hoy · ${esc(fecha)}</div><div class="v">${usd(R.total)}</div><div class="bs">${S.cfg.tasa?bs(toBs(R.total)):''}</div>
+      <div class="minis"><div>Ganancia<b>${usd(R.gan)}</b></div><div>Ventas<b>${R.n}</b></div></div></div>
+    <section class="money" aria-label="Dónde está la plata hoy"><h3>Dónde está la plata hoy</h3>${barras}${R.abonos?`<p class="muted" style="margin:0;font-size:.8rem">Incluye ${usd(R.abonos)} en abonos de fiado.</p>`:''}</section>
+    ${bajos.length?`<section class="list" aria-label="Se están acabando"><div class="item"><h3 class="grow">Se están acabando</h3><span class="muted" style="font-size:.8rem">${bajos.length} ${bajos.length===1?'producto':'productos'}</span></div>
+      ${bajos.map(p=>`<div class="item"><span class="pill ${p.stock<=0?'bad':''}">${p.stock<=0?'Agotado':'Quedan '+p.stock}</span><span class="grow t">${esc(p.nombre)}</span><button type="button" class="mini" data-prod="${p.id}">+ Producir</button></div>`).join('')}</section>`:''}
+    ${totDeben?`<button type="button" class="banner row" data-tab="fiado" style="border:0;font:inherit;color:inherit;text-align:left;cursor:pointer;width:100%"><span>Te deben <b class="num">${usd(totDeben)}</b> entre ${deben.length} ${deben.length===1?'cliente':'clientes'}</span><b style="color:var(--leaf)">Ver fiado</b></button>`:''}
+    ${R.cierre?`<div class="banner" style="background:transparent;border:1px solid var(--line)">Caja cerrada hoy a las ${new Date(R.cierre.t).toLocaleTimeString('es-VE',{hour:'2-digit',minute:'2-digit'})}. Puedes volver a cerrarla si sigues vendiendo.</div>`:''}
+    <button type="button" class="cta-dark" data-act="cierre"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Cerrar caja de hoy</button>`;
+}
+function vCierre(){
+  const R=resumenHoy();S.esperado=R;
+  const f2=n=>nf.format(r2(n));
+  return `<div class="row" style="justify-content:flex-start"><button type="button" class="mini" data-tab="inicio" aria-label="Volver al inicio">← Inicio</button><h2>Cierre de caja</h2></div>
+    <p class="muted" style="margin:0">Cuenta lo que tienes y anótalo. La app lo compara con lo que debería haber según las ventas y abonos de hoy.</p>
+    <div class="ctable">
+      <div class="crow head"><span>Forma</span><span>Debería</span><span>Contaste</span></div>
+      <div class="crow"><label for="cUsd">Efectivo $</label><span class="num">${usd(R.por.usd.u)}</span><input type="text" id="cUsd" inputmode="decimal" value="${f2(R.por.usd.u)}"></div>
+      <div class="diff" id="dUsd"></div>
+      <div class="crow"><label for="cBs">Efectivo Bs</label><span class="num">${bs(R.por.bs.b)}</span><input type="text" id="cBs" inputmode="decimal" value="${f2(R.por.bs.b)}"></div>
+      <div class="diff" id="dBs"></div>
+      <div class="crow"><span style="font-weight:800">Pago móvil</span><span class="num">${bs(R.por.pm.b)}</span><label class="chk" for="cPm"><input type="checkbox" id="cPm">En el banco</label></div>
+      <div class="crow"><span style="font-weight:800">Punto</span><span class="num">${usd(R.por.punto.u)}</span><label class="chk" for="cPu"><input type="checkbox" id="cPu">Verificado</label></div>
+    </div>
+    <section class="money" aria-label="Resumen del día"><h3>Resumen del día</h3>
+      <div class="row"><span>Vendido (${R.n} ${R.n===1?'venta':'ventas'})</span><span class="num">${usd(R.total)}</span></div>
+      <div class="row"><span>Costo de lo vendido</span><span class="num">−${usd(R.costo)}</span></div>
+      <div class="row total" style="font-weight:800"><span>Ganancia</span><span class="num" style="color:var(--ok)">${usd(R.gan)}</span></div>
+      <div class="row muted" style="font-size:.85rem"><span>Quedó fiado hoy</span><span class="num" style="color:var(--bad)">${usd(R.por.fiado.u)}</span></div>
+      ${R.abonos?`<div class="row muted" style="font-size:.85rem"><span>Abonos recibidos</span><span class="num">${usd(R.abonos)}</span></div>`:''}
+    </section>
+    <div class="field"><label for="cNota">Nota del día (opcional)</label><input id="cNota" placeholder="Ej. Di vuelto de más en la tarde"></div>
+    <div class="actions"><button type="button" class="btn ghost" data-act="compartir">Compartir resumen</button><button type="button" class="btn" data-act="cerrarCaja">Cerrar caja</button></div>`;
+}
+function leerCierre(){
+  const R=S.esperado||resumenHoy();
+  const pv=v=>{v=String(v||'0').trim();return v.includes(',')?num(v.replace(/\./g,'')):num(v)};
+  const cu=pv($('#cUsd')?.value),cb=pv($('#cBs')?.value);
+  return{R,cu:r2(cu),cb:r2(cb),du:r2(cu-R.por.usd.u),db:r2(cb-R.por.bs.b)};
+}
+function updCierre(){
+  if(!$('#cUsd'))return;
+  const {du,db}=leerCierre();
+  const msg=(d,f,eq)=>Math.abs(d)<0.005?'<span class="pill ok">Cuadra ✓</span>':`<span class="pill ${d<0?'bad':''}">${d<0?'Faltan':'Sobran'} ${f(Math.abs(d))}${eq&&S.cfg.tasa?' ('+usd(Math.abs(d)/S.cfg.tasa)+')':''}</span>`;
+  $('#dUsd').innerHTML=msg(du,usd);$('#dBs').innerHTML=msg(db,bs,true);
+  $('#cUsd').className=Math.abs(du)<0.005?'ok':'off';$('#cBs').className=Math.abs(db)<0.005?'ok':'off';
+}
+function textoResumen(){
+  const {R,cu,cb,du,db}=leerCierre();
+  const fecha=new Date().toLocaleDateString('es-VE',{weekday:'long',day:'numeric',month:'long'});
+  const L=[`Cierre de caja · ${fecha}`,`Vendido: ${usd(R.total)} (${R.n} ventas)`,`Ganancia: ${usd(R.gan)}`,
+    `Efectivo $: ${usd(cu)}${Math.abs(du)>=0.005?' ('+(du<0?'faltan ':'sobran ')+usd(Math.abs(du))+')':''}`,
+    `Efectivo Bs: ${bs(cb)}${Math.abs(db)>=0.005?' ('+(db<0?'faltan ':'sobran ')+bs(Math.abs(db))+')':''}`,
+    `Pago móvil: ${bs(R.por.pm.b)}`,`Punto: ${usd(R.por.punto.u)}`,`Quedó fiado: ${usd(R.por.fiado.u)}`];
+  const nota=($('#cNota')?.value||'').trim();if(nota)L.push('Nota: '+nota);
+  if(S.cfg.tasa)L.push(`Tasa: Bs ${nf.format(S.cfg.tasa)} / $`);
+  return L.join('\n');
+}
+async function compartir(){
+  const t=textoResumen();
+  try{if(navigator.share){await navigator.share({text:t});return}}catch(e){if(e&&e.name==='AbortError')return}
+  try{await navigator.clipboard.writeText(t);toast('Resumen copiado. Pégalo en WhatsApp.')}catch(e){toast('No se pudo compartir en este teléfono.')}
+}
+async function cerrarCaja(){
+  const {R,cu,cb,du,db}=leerCierre();
+  const m={id:uid(),tipo:'cierre',t:Date.now(),tasa:S.cfg.tasa,total:R.total,costo:R.costo,ventas:R.n,
+    esperado:{usd:r2(R.por.usd.u),bs:r2(R.por.bs.b),pm:r2(R.por.pm.b),punto:r2(R.por.punto.u),fiado:r2(R.por.fiado.u)},
+    contado:{usd:cu,bs:cb},dif:{usd:du,bs:db},verif:{pm:!!$('#cPm')?.checked,punto:!!$('#cPu')?.checked},nota:($('#cNota')?.value||'').trim()};
+  await S.store.addMov(m);S.view='inicio';render();toast(Math.abs(du)<0.005&&Math.abs(db)<0.005?'Caja cerrada. Todo cuadra ✓':'Caja cerrada con diferencias anotadas');
 }
 function vInventario(){
   const items=S.cfg.productos.map(p=>{
@@ -342,6 +477,7 @@ function vReportes(){
     if(m.tipo==='venta'){t=m.items.map(i=>i.cant+' '+i.nombre).join(', ');sub=(METODOS.find(x=>x[0]===m.metodo)||['',''])[1]+(m.cliente?' · '+(cliente(m.cliente)?.nombre||''):'');monto=usd(m.total)}
     else if(m.tipo==='deuda'){t=(m.nota||'Deuda anotada')+': '+(cliente(m.cliente)?.nombre||'cliente');sub='Fiado sin productos';monto=usd(m.monto)}
     else if(m.tipo==='abono'){t='Abono de '+(cliente(m.cliente)?.nombre||'cliente');sub=(METODOS.find(x=>x[0]===m.metodo)||['',''])[1];monto=usd(m.monto)}
+    else if(m.tipo==='cierre'){t='Cierre de caja';sub=m.nota||((Math.abs(m.dif?.usd||0)<0.005&&Math.abs(m.dif?.bs||0)<0.005)?'Todo cuadró':'Con diferencias');monto=usd(m.total)}
     else{t='Producción: '+m.cant+' '+m.nombre;sub='Costo '+usd(m.costoTotal);monto='+'+m.cant}
     return `<div class="item"><div class="grow"><div class="t" style="font-weight:700">${esc(t)}</div><div class="sub">${esc(hora)} · ${esc(sub)}</div></div><div class="num">${monto}</div><button type="button" class="mini" data-anular="${m.id}" aria-label="Anular">✕</button></div>`}).join('');
   return `<div class="row"><h2>Reportes</h2></div>
@@ -435,7 +571,7 @@ function sAbono(cid){
 }
 function sAnular(mid){
   const m=S.movs.find(x=>x.id===mid);if(!m)return;
-  sheet(`<h2>¿Anular este movimiento?</h2><p class="muted" style="margin:0">${m.tipo==='venta'?'Las unidades vuelven al inventario.':m.tipo==='produccion'?'Las unidades se restan del inventario.':m.tipo==='deuda'?'Esa deuda se borra de la cuenta del cliente.':'La deuda del cliente vuelve a subir.'}</p>${acts('Anular',true)}`,
+  sheet(`<h2>¿Anular este movimiento?</h2><p class="muted" style="margin:0">${m.tipo==='venta'?'Las unidades vuelven al inventario.':m.tipo==='produccion'?'Las unidades se restan del inventario.':m.tipo==='deuda'?'Esa deuda se borra de la cuenta del cliente.':m.tipo==='cierre'?'Se borra este cierre. Las ventas no cambian.':'La deuda del cliente vuelve a subir.'}</p>${acts('Anular',true)}`,
   async()=>{
     if(m.tipo==='venta')for(const it of m.items){const p=prod(it.pid);if(p)p.stock+=it.cant}
     if(m.tipo==='produccion'){const p=prod(m.pid);if(p)p.stock-=m.cant}
@@ -479,11 +615,15 @@ document.addEventListener('click',e=>{
   if(d.act==='cobrar')cobrar();
   if(d.act==='nuevoCli')sCliente();
   if(d.act==='nuevoProd')sProducto();
+  if(d.act==='cierre'){S.view='cierre';render();$('#main').scrollTop=0}
+  if(d.act==='compartir')compartir();
+  if(d.act==='cerrarCaja')cerrarCaja();
   if(d.act==='exportar')exportar();
   if(d.act==='importar')$('#fileImport').click();
   if(b.id==='btnInstall'&&installEvt){installEvt.prompt();installEvt.userChoice.finally(()=>{installEvt=null;b.hidden=true})}
 });
 document.addEventListener('change',e=>{if(e.target.id==='selCli'){S.cliente=e.target.value;render()}if(e.target.id==='fileImport'){const f=e.target.files[0];e.target.value='';if(f)importar(f)}});
+document.addEventListener('input',e=>{if(e.target.id==='cUsd'||e.target.id==='cBs')updCierre()});
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeSheet()});
 
 boot();
